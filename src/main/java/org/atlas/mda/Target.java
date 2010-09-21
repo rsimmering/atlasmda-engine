@@ -1,5 +1,8 @@
 package org.atlas.mda;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class Target {
 
     private String name;
@@ -7,12 +10,11 @@ public class Target {
     private Boolean collection;
     private String template;
     private String outputFile;
-    private String namespace;
     private String outputPath;
     private Boolean overwrite;
+    private Map<String, String> properties;
 
     public Target() {
-        
     }
 
     public String getName() {
@@ -30,15 +32,6 @@ public class Target {
     public void setOutputFile(String outputFile) {
         this.outputFile = outputFile;
     }
-
-    public String getNamespace() {
-        return namespace;
-    }
-
-    public void setNamespace(String namespace) {
-        this.namespace = namespace;
-    }
-    
 
     public boolean isOverwritable() {
         return Boolean.valueOf(overwrite);
@@ -88,9 +81,26 @@ public class Target {
         return outputPath;
     }
 
-    public void setOutputPath(String outputPath) {
-        this.outputPath = outputPath;
+    public void setOutputPath(String path) throws TransformException {
+        outputPath = Context.replaceVariables(path);
+        outputPath.replace(Context.ROOT, Context.getRootFolder());
     }
-    
 
+    public Map<String, String> getProperties() {
+        if (properties == null) {
+            properties = new HashMap<String, String>();
+        }
+
+        return properties;
+    }
+
+    public String getProperty(String name) {
+        return getProperties().get(name);
+    }
+
+    public void setProperty(String name, String value) throws TransformException {
+        getProperties().put(name, Context.replaceVariables(value));
+    }
+
+    
 }

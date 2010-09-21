@@ -1,5 +1,7 @@
 package org.atlas.mda;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
@@ -20,13 +22,15 @@ public class PrimitiveManager {
     private static final String PIM = "pim";
     private static final String PSM = "psm";
 
-    public PrimitiveManager() {
+    public PrimitiveManager() throws TransformException {
         load();
     }
 
-    private void load() {
+    private void load() throws TransformException {
         try {
-            InputStream s = ConfigurationLoader.getPrimitivesAsStream();
+            String fn = Context.getPrimitives();
+            File f = new File(fn);
+            InputStream s = new FileInputStream(f);
 
             Digester d = new Digester();
             d.push(this);
@@ -36,9 +40,9 @@ public class PrimitiveManager {
 
             d.parse(s);
         } catch (IOException ex) {
-            Logger.getLogger(TargetManager.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(PrimitiveManager.class.getName()).log(Level.SEVERE, null, ex);
         } catch (SAXException ex) {
-            Logger.getLogger(TargetManager.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(PrimitiveManager.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 

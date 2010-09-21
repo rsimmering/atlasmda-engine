@@ -26,11 +26,9 @@ public class ModelTransformer {
         Model model = Context.getModelManager().getModel();
         TypeResolver.resolve(model);
 
-        TargetManager targetManager = Context.getTargetManager();
-
         Collection<Entity> entities = model.getEntities();
         Logger.getLogger(ModelTransformer.class.getName()).log(Level.INFO, "Transforming " + entities.size() + " Entities");
-        List<Target> targets = targetManager.getTargets(Stereotype.entity);
+        List<Target> targets = Context.getTargets(Stereotype.entity);
         if (targets != null && targets.size() > 0) {
             // Apply the entity templates to the entities in the PIM
             for (Entity entity : entities) {
@@ -44,7 +42,7 @@ public class ModelTransformer {
         // Apply the templates to the enums in the PIM
         Collection<Enumeration> enums = model.getEnumerations();
         Logger.getLogger(ModelTransformer.class.getName()).log(Level.INFO, "Transforming " + enums.size() + " Enums");
-        targets = targetManager.getTargets(Stereotype.enumeration);
+        targets = Context.getTargets(Stereotype.enumeration);
         if (targets != null && targets.size() > 0) {
             for (Enumeration e : enums) {
                 Logger.getLogger(ModelTransformer.class.getName()).log(Level.INFO, e.getName());
@@ -57,7 +55,7 @@ public class ModelTransformer {
         // Apply the templates to the controls in the PIM
         Collection<Control> controls = model.getControls();
         Logger.getLogger(ModelTransformer.class.getName()).log(Level.INFO, "Transforming " + controls.size() + " Controls");
-        targets = targetManager.getTargets(Stereotype.control);
+        targets = Context.getTargets(Stereotype.control);
         if (targets != null && targets.size() > 0) {
             for (Control c : controls) {
                 Logger.getLogger(ModelTransformer.class.getName()).log(Level.INFO, c.getName());
@@ -70,7 +68,7 @@ public class ModelTransformer {
         // Apply the templates to the controls in the PIM
         Collection<Boundary> boundries = model.getBoundaries();
         Logger.getLogger(ModelTransformer.class.getName()).log(Level.INFO, "Transforming " + boundries.size() + " Boundries");
-        targets = targetManager.getTargets(Stereotype.boundary);
+        targets = Context.getTargets(Stereotype.boundary);
         if (targets != null && targets.size() > 0) {
             for (Boundary b : boundries) {
                 Logger.getLogger(ModelTransformer.class.getName()).log(Level.INFO, b.getName());
@@ -80,7 +78,7 @@ public class ModelTransformer {
             }
         }
 
-        targets = targetManager.getCollectionTargets(Stereotype.control);
+        targets = Context.getCollectionTargets(Stereotype.control);
         if (targets != null && targets.size() > 0) {
             Collection<Type> controlTypes = (Collection) controls;
             if(controlTypes != null && controlTypes.size() > 0){
@@ -90,7 +88,7 @@ public class ModelTransformer {
             }
         }
 
-        targets = targetManager.getCollectionTargets(Stereotype.entity);
+        targets = Context.getCollectionTargets(Stereotype.entity);
         if (targets != null && targets.size() > 0) {
             Collection<Type> entityTypes = (Collection) entities;
             if(entityTypes != null && entityTypes.size() > 0){
@@ -100,7 +98,7 @@ public class ModelTransformer {
             }
         }
 
-        targets = targetManager.getCollectionTargets(Stereotype.enumeration);
+        targets = Context.getCollectionTargets(Stereotype.enumeration);
         if (targets != null && targets.size() > 0) {
             Collection<Type> enumTypes = (Collection) enums;
             if(enumTypes != null && enumTypes.size() > 0){
@@ -110,7 +108,7 @@ public class ModelTransformer {
             }
         }
 
-        targets = targetManager.getCollectionTargets(Stereotype.boundary);
+        targets = Context.getCollectionTargets(Stereotype.boundary);
         if (targets != null && targets.size() > 0) {
             Collection<Type> boundryTypes = (Collection) boundries;
             if(boundryTypes != null && boundryTypes.size() > 0){

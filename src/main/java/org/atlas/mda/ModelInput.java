@@ -9,8 +9,8 @@ public class ModelInput {
         return file;
     }
 
-    public void setFile(String file) {
-        this.file = file.replace(Context.ROOT, Context.getRootFolder());
+    public void setFile(String fileName) throws TransformException {
+        file = Context.replaceVariables(fileName);
     }
 
     public String getAdapter() {

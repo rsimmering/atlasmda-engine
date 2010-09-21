@@ -1,7 +1,6 @@
 package org.atlas.mda;
 
 import java.util.List;
-import java.util.Map;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -24,58 +23,76 @@ public class ContextTest {
     public static void tearDownClass() throws Exception {
     }
 
+    @Test
+    public void getProperties() throws TransformException {
+        System.out.println("getProperties");
+
+        assertEquals("target/testoutput/src/generated/java/org/atlas/test", Context.getProperty("generated.source.root"));
+        assertEquals("target/testoutput/src/main/java/org/atlas/test", Context.getProperty("main.source.root"));
+        assertEquals("src/test/resources", Context.getProperty("test.resource.root"));
+        assertEquals("org.atlas.test", Context.getProperty("namespace"));
+
+    }
+
     /**
      * Test of getTemplateInput method, of class Context.
      */
     @Test
-    public void testGetTemplate() {
-        System.out.println("getTemplate");
+    public void getTemplates() throws TransformException {
+        System.out.println("getTemplates");
         String expResult = "src/test/resources/templates";
-        TemplateInput result = null;
-        try{
-            result = Context.getTemplateInput();
-        }
-        catch(TransformException e){
-            fail("TransformationException thrown"+e);
-        }
-        assertEquals(expResult, result.getDir());
+        String result = Context.getTemplates();
+        assertEquals(expResult, result);
     }
-
 
     /**
      * Test of getModelInputs method, of class Context.
      */
     @Test
-    public void testGetModels() {
+    public void getModels() throws TransformException {
         System.out.println("getModels");
         String expResult = "src/test/resources/project.xml";
         List<ModelInput> result = null;
-        try{
-            result = Context.getModelInputs();
-        }
-        catch(TransformException e){
-            fail("TransformationException thrown"+e);
-        }
+        result = Context.getModelInputs();
         assertEquals(1, result.size());
         assertEquals(expResult, result.get(0).getFile());
     }
 
 
     /**
-     * Test of getOutputs method, of class Context.
+     * Test of getPrimitives method, of class Context.
      */
     @Test
-    public void testGetOutputs() {
-        System.out.println("getOutputs");
-        String expResult = "target/testoutput/src/generated/resources";
-        Map<String, Output> result = null;
-        try{
-            result = Context.getOutputs();
-        }
-        catch(TransformException e){
-            fail("TransformationException thrown"+e);
-        }
-        assertEquals(expResult, result.get("generated.resource.root").getDir());
+    public void getPrimitives() throws TransformException {
+        System.out.println("getPrimitives");
+        String expResult = "src/test/resources/primitives.xml";
+        String result = Context.getPrimitives();
+        assertEquals(expResult, result);
     }
 
+    @Test
+    public void getUtility() throws TransformException {
+        System.out.println("getUtility");
+        UtilityInput u = Context.getUtilityInputs().get(0);
+        assertEquals("util", u.getName());
+        assertEquals("org.atlas.utils.AtlasStringUtils", u.getImpl());
+        assertNotNull(Context.getUtility("util"));
+    }
+
+    @Test
+    public void getTarget() throws TransformException {
+        System.out.println("getTargets");
+
+        List<Target> targets = Context.getTargets(Stereotype.entity);
+
+        assertEquals(2, targets.size());
+
+        Target t = targets.get(0);
+        assertEquals("entity.impl.base", t.getName());
+        assertEquals(Stereotype.entity, t.getTargetStereotype());
+        assertEquals("entity.base.vm", t.getTemplate());
+        assertEquals("${name}Base.java", t.getOutputFile());
+        assertEquals("org.atlas.test.entity", t.getProperty("namespace"));
+        assertTrue(t.getOverwrite());
+    }
 }

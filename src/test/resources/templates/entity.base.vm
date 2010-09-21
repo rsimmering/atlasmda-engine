@@ -1,4 +1,4 @@
-package ${target.namespace};
+package ${target.getProperty("namespace")};
 
 #if($type.hasMany())
 import java.util.List;
@@ -24,19 +24,19 @@ public abstract class ${type.name}Base extends ${type.generalization} {
 #end
 #foreach($ass in ${type.getOneToMany()})
 #if(${ass.isOwner()})
-    private List<${ass.entity}> ${ass.name}List;
+    private List<${ass.entity.name}> ${ass.name}List;
 #else
-    private ${ass.entity} ${ass.name};
+    private ${ass.entity.name} ${ass.name};
 #end
 #end
 #foreach($ass in ${type.getManyToOne()})
-    private ${ass.entity} ${ass.name};
+    private ${ass.entity.name} ${ass.name};
 #end
 #foreach($ass in ${type.getManyToMany()})
-    private List<${ass.entity}> ${ass.name}List;
+    private List<${ass.entity.name}> ${ass.name}List;
 #end
 #foreach($ass in ${type.getOneToOne()})
-    private ${ass.entity} ${ass.name};
+    private ${ass.entity.name} ${ass.name};
 #end
 #if(${util.isBlank(${type.getGeneralization()})})
 

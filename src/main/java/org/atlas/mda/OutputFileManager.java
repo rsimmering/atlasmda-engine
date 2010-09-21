@@ -39,19 +39,6 @@ public final class OutputFileManager {
                 namespace = namespace.replace('.', '/');
                 outputPath = outputPath.replace(match, namespace);
             }
-            else{
-                // Trim the delimiters
-                String outputName = match.substring(2, match.length() - 1);
-
-                //Attempt to resolve the output from the context set of outputs
-                Output output = Context.getOutput(outputName);
-                if (output == null) {
-                    Logger.getLogger(TargetManager.class.getName()).log(Level.SEVERE, "Output '" + outputName + "' is specified in the target '" + target.getName() + "' but it could not be resolved in the context.xml");
-                    throw new TransformException("Could not resolve output '" + outputName + "'");
-                }
-
-                outputPath = outputPath.replace(match, output.getDir());
-            }
         }
 
         return outputPath;

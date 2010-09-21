@@ -21,12 +21,12 @@ public class OutputFileManagerTest {
      * Test of testGetOutputFileName method, of class OutputFileManager.
      */
     @Test
-    public void testGetOutputFileName() {
+    public void testGetOutputFileName() throws TransformException {
         System.out.println("testGetOutputFileName");
         String expResult = "SampleBase.java";
 
 
-        Target target = new TargetManager().getTargets(Stereotype.entity).get(0);
+        Target target = Context.getTargets(Stereotype.entity).get(0);
 
         Entity entity = new Entity();
         entity.setName("Sample");
@@ -35,7 +35,7 @@ public class OutputFileManagerTest {
         assertEquals(expResult, result);
 
         expResult = "Sample.java";
-        target = new TargetManager().getTargets(Stereotype.entity).get(1);
+        target = Context.getTargets(Stereotype.entity).get(1);
         result = OutputFileManager.getOutputFileName(target, entity);
         assertEquals(expResult, result);
     }
@@ -51,13 +51,13 @@ public class OutputFileManagerTest {
         Entity entity = new Entity();
         entity.setName("Sample");
 
-        Target target = new TargetManager().getTargets(Stereotype.entity).get(0);
+        Target target = Context.getTargets(Stereotype.entity).get(0);
 
         String result = OutputFileManager.getOutputFolderName(target, entity);
         assertEquals(expResult, result);
 
         expResult = "target/testoutput/src/main/java/org/atlas/test/entity";
-        target = new TargetManager().getTargets(Stereotype.entity).get(1);
+        target = Context.getTargets(Stereotype.entity).get(1);
         result = OutputFileManager.getOutputFolderName(target, entity);
         assertEquals(expResult,result);
     }
@@ -66,7 +66,7 @@ public class OutputFileManagerTest {
     public void testGetOutputFile() throws IOException, OverwriteException, TransformException {
         System.out.println("testGetOutputFile");
 
-        Target target = new TargetManager().getTargets(Stereotype.entity).get(0);
+        Target target = Context.getTargets(Stereotype.entity).get(0);
 
         Entity entity = new Entity();
         entity.setName("Sample");
@@ -78,7 +78,7 @@ public class OutputFileManagerTest {
         assertTrue(file.exists());
         file.delete();
 
-        target = new TargetManager().getTargets(Stereotype.entity).get(1);
+        target = Context.getTargets(Stereotype.entity).get(1);
         file = OutputFileManager.getOutputFile(target, entity);
         fw = new FileWriter(file,true);
         fw.write(file.getAbsolutePath());
@@ -92,7 +92,7 @@ public class OutputFileManagerTest {
     public void testGetOutputFileOverwriteException() throws IOException, OverwriteException, TransformException {
         System.out.println("testGetOutputFileOverwriteException");
 
-        Target target = new TargetManager().getTargets(Stereotype.entity).get(1);
+        Target target = Context.getTargets(Stereotype.entity).get(1);
 
         Entity entity = new Entity();
         entity.setName("Sample");
@@ -119,7 +119,7 @@ public class OutputFileManagerTest {
     public void testGetOutputFileOverwrite() throws OverwriteException, IOException, TransformException {
         System.out.println("testGetOutputFileOverwriteException");
 
-        Target target = new TargetManager().getTargets(Stereotype.entity).get(0);
+        Target target = Context.getTargets(Stereotype.entity).get(0);
 
         Entity entity = new Entity();
         entity.setName("Sample");

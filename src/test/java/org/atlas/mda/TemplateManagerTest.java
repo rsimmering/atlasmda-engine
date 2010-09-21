@@ -20,14 +20,13 @@ public class TemplateManagerTest {
     public void testGetTemplate() throws Exception {
         System.out.println("getTemplate");
 
-        TargetManager targetManager = new TargetManager();
         TemplateManager templateManager = new TemplateManager();
 
-        Target target = targetManager.getTargets(Stereotype.entity).get(0);
+        Target target = Context.getTargets(Stereotype.entity).get(0);
         Template result = templateManager.getTemplate(target);
         assertNotNull(result);
 
-        target = targetManager.getTargets(Stereotype.entity).get(1);
+        target = Context.getTargets(Stereotype.entity).get(1);
         result = templateManager.getTemplate(target);
         assertNotNull(result);
     }

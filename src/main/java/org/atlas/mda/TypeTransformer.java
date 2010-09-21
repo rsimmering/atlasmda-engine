@@ -36,6 +36,7 @@ public class TypeTransformer {
             fw = new FileWriter(outputFile, false);
 
             VelocityContext vc = new VelocityContext();
+            vc.put("context", Context.instance());
             vc.put("target", target);
             vc.put("type", type);
             addUtilities(vc);
@@ -75,6 +76,7 @@ public class TypeTransformer {
             fw = new FileWriter(outputFile, false);
 
             VelocityContext vc = new VelocityContext();
+            vc.put("context", Context.instance());
             vc.put("target", target);
             vc.put("types", types);
             addUtilities(vc);

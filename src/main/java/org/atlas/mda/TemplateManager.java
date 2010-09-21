@@ -28,7 +28,7 @@ public class TemplateManager {
                 props.setProperty("resource.loader", "file");
                 props.setProperty("file.resource.loader.class", "org.apache.velocity.runtime.resource.loader.FileResourceLoader");
                 props.setProperty("file.resource.loader.cache", "true");
-                props.setProperty("file.resource.loader.path", Context.getTemplateInput().getDir());
+                props.setProperty("file.resource.loader.path", Context.getTemplates());
                 velocityEngine = new VelocityEngine();
                 velocityEngine.init(props);
             } catch (Exception ex) {

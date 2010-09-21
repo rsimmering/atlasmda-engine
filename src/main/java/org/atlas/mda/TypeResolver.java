@@ -20,8 +20,8 @@ public final class TypeResolver {
             return type;
         } else if (model.getEnumeration(type) != null) {
             return type;
-        } else if (Context.getPrimitives().getPsmType(type) != null) {
-            return Context.getPrimitives().getPsmType(type);
+        } else if (Context.getPrimitiveManager().getPsmType(type) != null) {
+            return Context.getPrimitiveManager().getPsmType(type);
         } else {
             throw new TransformException("Invalid type [" + type + "]");
         }

@@ -10,6 +10,8 @@ import java.net.URL;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import org.apache.commons.lang.StringUtils;
 
 /**
@@ -22,18 +24,47 @@ public class Context {
     public static final String ROOT = "${root}";
     private static final String FILE = "file";
     private static final String ADAPTER = "adapter";
-    private static final String DIRECTORY = "dir";
+    private static final String DIR = "dir";
     private static final String NAME = "name";
+    private static final String VALUE = "value";
     private static final String IMPL = "impl";
-    private Map<String, Output> outputs = new HashMap<String, Output>();
+    private static final String STEREOTYPE = "stereotype";
+    private static final String TEMPLATE = "template";
+    private static final String OUTPUT_FILE = "outputFile";
+    private static final String OUTPUT_PATH = "outputPath";
+    private static final String OVERWRITE = "overwrite";
+    private static final String COLLECTION = "collection";
+    private static final String VARIABLE = "\\$\\{.*?\\}";
+    private static final String SOURCE = ".source.";
+    
+    private static final String PROPERTY = "context/properties/property";
+    private static final String TEMPLATES = "context/templates";
+    private static final String PRIMITIVES = "context/primitives";
+    private static final String UTILITY = "context/utilities/utility";
+    private static final String MODEL = "context/models/model";
+    private static final String TARGET = "context/targets/target";
+    private static final String TARGET_PROPERTY = "context/targets/target/property";
+
+    private static final String SET_PROPERTY = "setProperty";
+    private static final String SET_TEMPLATES = "setTemplates";
+    private static final String SET_PRIMITIVES = "setPrimitives";
+    private static final String ADD_MODEL_INPUT = "addModelInput";
+    private static final String ADD_TARGET = "addTarget";
+    private static final String ADD_UTILITY_INPUT = "addUtilityInput";
+
+    private String templates;
+    private String primitives;
     private Map<String, Object> utilities = new HashMap<String, Object>();
     private List<ModelInput> modelInputs = new ArrayList<ModelInput>();
     private List<UtilityInput> utilityInputs = new ArrayList<UtilityInput>();
-    private TemplateInput templateInput = new TemplateInput();
     private ModelManager modelManager = new ModelManager();
-    private PrimitiveManager primitiveManager = new PrimitiveManager();
-    private TargetManager targetManager = new TargetManager();
-    private TemplateManager templateManager = new TemplateManager();
+    private PrimitiveManager primitiveManager;
+    private TemplateManager templateManager;
+    private Map<String, String> properties;
+    private Map<Stereotype, List<Target>> singleTargets = new HashMap<Stereotype, List<Target>>();
+    private Map<Stereotype, List<Target>> collectionTargets = new HashMap<Stereotype, List<Target>>();
+    private Set<String> outputPaths = new HashSet<String>();
+
     private static String ROOT_FOLDER = "";
     private static Context INSTANCE = null;
 
@@ -59,31 +90,42 @@ public class Context {
 
             Digester d = new Digester();
             d.push(this);
-            d.addObjectCreate("context/inputs/model", ModelInput.class);
-            d.addSetProperties("context/inputs/model", new String[]{FILE, ADAPTER}, new String[]{FILE, ADAPTER});
-            d.addSetNext("context/inputs/model", "addModelInput");
 
-            d.addObjectCreate("context/inputs/templates", TemplateInput.class);
-            d.addSetProperties("context/inputs/templates", new String[]{FILE, DIRECTORY}, new String[]{FILE, DIRECTORY});
-            d.addSetNext("context/inputs/templates", "setTemplateInput");
+            d.addCallMethod(PROPERTY, SET_PROPERTY, 2);
+            d.addCallParam(PROPERTY, 0, NAME);
+            d.addCallParam(PROPERTY, 1, VALUE);
 
-            d.addObjectCreate("context/inputs/utility", UtilityInput.class);
-            d.addSetProperties("context/inputs/utility", new String[]{NAME, IMPL}, new String[]{NAME, IMPL});
-            d.addSetNext("context/inputs/utility", "addUtilityInput");
+            d.addObjectCreate(MODEL, ModelInput.class);
+            d.addSetProperties(MODEL, new String[]{FILE, ADAPTER}, new String[]{FILE, ADAPTER});
+            d.addSetNext(MODEL, ADD_MODEL_INPUT);
 
+            d.addCallMethod(TEMPLATES, SET_TEMPLATES, 1);
+            d.addCallParam(TEMPLATES, 0, DIR);
 
-            d.addObjectCreate("context/outputs/output", Output.class);
-            d.addSetProperties("context/outputs/output", new String[]{NAME, DIRECTORY}, new String[]{NAME, DIRECTORY});
-            d.addSetNext("context/outputs/output", "addOutput");
+            d.addCallMethod(PRIMITIVES, SET_PRIMITIVES, 1);
+            d.addCallParam(PRIMITIVES, 0, FILE);
+
+            d.addObjectCreate(UTILITY, UtilityInput.class);
+            d.addSetProperties(UTILITY, new String[]{NAME, IMPL}, new String[]{NAME, IMPL});
+            d.addSetNext(UTILITY, ADD_UTILITY_INPUT);
+            
+            d.addObjectCreate(TARGET, Target.class);
+            d.addSetProperties(TARGET, new String[]{NAME, STEREOTYPE, COLLECTION, TEMPLATE, OUTPUT_FILE, OUTPUT_PATH, OVERWRITE}, new String[]{NAME, STEREOTYPE, COLLECTION, TEMPLATE, OUTPUT_FILE, OUTPUT_PATH, OVERWRITE});
+            d.addCallMethod(TARGET_PROPERTY, SET_PROPERTY, 2);
+            d.addCallParam(TARGET_PROPERTY, 0, NAME);
+            d.addCallParam(TARGET_PROPERTY, 1, VALUE);
+            d.addSetNext(TARGET, ADD_TARGET);
 
             d.parse(s);
 
-            //validateContext();
         } catch (IOException ex) {
-            Logger.getLogger(TargetManager.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(Context.class.getName()).log(Level.SEVERE, null, ex);
         } catch (SAXException ex) {
-            Logger.getLogger(TargetManager.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(Context.class.getName()).log(Level.SEVERE, null, ex);
         }
+
+        primitiveManager = new PrimitiveManager();
+        templateManager = new TemplateManager();
     }
 
     private void validateContext() throws TransformException {
@@ -96,23 +138,23 @@ public class Context {
             validateModelLocation(pim);
         }
 
-        if (StringUtils.isBlank(templateInput.getDir())) {
+        if (StringUtils.isBlank(templates)) {
             throw new TransformException("No Template Directory Specified!");
         }
-        File templateDir = new File(templateInput.getDir());
+        File templateDir = new File(templates);
 
         //Check if directory exists, if not then see if the manual config location was set
         if (!templateDir.exists() && StringUtils.isNotBlank(ConfigurationLoader.getConfigLocation())) {
-            String sTemplateDir = ConfigurationLoader.getConfigLocation() + "/" + templateInput.getDir();
+            String sTemplateDir = ConfigurationLoader.getConfigLocation() + "/" + templates;
             templateDir = new File(sTemplateDir);
 
             if (!templateDir.exists()) {
-                throw new TransformException("Cannot locate Template Directory: " + templateInput.getDir());
+                throw new TransformException("Cannot locate Template Directory: " + templates);
             }
 
             // Normalize to Absolute Path
             String fullPath = templateDir.getAbsolutePath();
-            templateInput.setDir(fullPath);
+            setTemplates(fullPath);
         }
     }
 
@@ -149,25 +191,30 @@ public class Context {
         return instance().modelManager;
     }
 
-    public static PrimitiveManager getPrimitives() throws TransformException {
+    public static PrimitiveManager getPrimitiveManager() throws TransformException {
         return instance().primitiveManager;
-    }
-
-    public static TargetManager getTargetManager() throws TransformException {
-        return instance().targetManager;
     }
 
     public static TemplateManager getTemplateManager() throws TransformException {
         return instance().templateManager;
     }
 
-    public void setTemplateInput(TemplateInput template) {
-        templateInput = template;
+    public static void setTemplates(String template) throws TransformException {
+        instance().templates = replaceVariables(template);
     }
 
-    public static TemplateInput getTemplateInput() throws TransformException {
-        return instance().templateInput;
+    public static String getTemplates() throws TransformException {
+        return instance().templates;
     }
+
+    public static void setPrimitives(String p) throws TransformException {
+        instance().primitives = replaceVariables(p);
+    }
+
+    public static String getPrimitives() throws TransformException {
+        return instance().primitives;
+    }
+
 
     public void addUtilityInput(UtilityInput utility) {
         utilityInputs.add(utility);
@@ -183,18 +230,6 @@ public class Context {
 
     public static List<ModelInput> getModelInputs() throws TransformException {
         return instance().modelInputs;
-    }
-
-    public void addOutput(Output output) {
-        outputs.put(output.getName(), output);
-    }
-
-    public static Output getOutput(String name) throws TransformException {
-        return instance().outputs.get(name);
-    }
-
-    public static Map<String, Output> getOutputs() throws TransformException {
-        return instance().outputs;
     }
 
     public static Map<String, Object> getUtilities() throws TransformException {
@@ -226,5 +261,78 @@ public class Context {
 
     public void setUtilities(Map<String, Object> utilities) {
         this.utilities = utilities;
+    }
+
+    public Map<String, String> getProperties() {
+        if (properties == null) {
+            properties = new HashMap<String, String>();
+        }
+
+        return properties;
+    }
+
+    public static String getProperty(String name) throws TransformException {
+        return instance().getProperties().get(name);
+    }
+
+    public static void setProperty(String name, String value) throws TransformException {
+        String v = replaceVariables(value);
+        instance().getProperties().put(name, replaceVariables(v));
+        if(name.contains(SOURCE)) {
+            instance().outputPaths.add(v);
+        }
+    }
+
+    public static String replaceVariables(String parameterized) throws TransformException {
+        String resolved = parameterized.replace(Context.ROOT, Context.getRootFolder());
+
+        Pattern pattern = Pattern.compile(VARIABLE);
+        Matcher matcher = pattern.matcher(resolved);
+
+        while (matcher.find()) {
+            String match = matcher.group();
+
+            // Trim the delimiters
+            String name = match.substring(2, match.length() - 1);
+
+            //Attempt to resolve the output from the context set of outputs
+            String value = Context.getProperty(name);
+            if (value == null) {
+                Logger.getLogger(Context.class.getName()).log(Level.SEVERE, "Property '" + name + "' is specified in '" + parameterized + "' but it could not be resolved in the context.xml");
+                throw new TransformException("Could not resolve property '" + name + "'");
+            }
+
+            resolved = resolved.replace(match, value);
+        }
+
+        return resolved;
+
+    }
+
+    public void addTarget(Target target) {
+        if (target.getCollection() == null || !target.getCollection().booleanValue()) {
+            if (singleTargets.get(target.getTargetStereotype()) == null) {
+                singleTargets.put(target.getTargetStereotype(), new ArrayList<Target>());
+            }
+            singleTargets.get(target.getTargetStereotype()).add(target);
+        } else {
+            if (collectionTargets.get(target.getTargetStereotype()) == null) {
+                collectionTargets.put(target.getTargetStereotype(), new ArrayList<Target>());
+            }
+            collectionTargets.get(target.getTargetStereotype()).add(target);
+        }
+
+    }
+
+    public static List<Target> getTargets(Stereotype type) throws TransformException {
+        return instance().singleTargets.get(type);
+    }
+
+    public static List<Target> getCollectionTargets(Stereotype type) throws TransformException {
+        return instance().collectionTargets.get(type);
+    }
+
+    public static Set<String> getOutputPaths() throws TransformException {
+        return instance().outputPaths;
     }
 }

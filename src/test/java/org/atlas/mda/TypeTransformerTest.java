@@ -23,7 +23,7 @@ public class TypeTransformerTest {
         System.out.println("transform");
 
 
-        Target target = new TargetManager().getTargets(Stereotype.entity).get(0);
+        Target target = Context.getTargets(Stereotype.entity).get(0);
 
         Entity entity = new Entity();
         entity.setName("Sample");
