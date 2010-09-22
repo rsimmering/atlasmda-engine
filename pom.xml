@@ -11,34 +11,39 @@
     <version>2.0-SNAPSHOT</version>
 
     <distributionManagement>
-   	    <repository>
-   		  <id>atlas-releases</id>
-   		  <url>http://www.atlas-mda.org/repo/repositories/releases/</url>
-   		  <uniqueVersion>true</uniqueVersion>
-   	    </repository>
-           <snapshotRepository>
-             <id>atlas-snapshots</id>
-             <url>http://www.atlas-mda.org/repo/content/repositories/snapshots/</url>
-             <uniqueVersion>false</uniqueVersion>
-           </snapshotRepository>
+	    <repository>
+		  <id>atlas-releases</id>
+		  <url>http://www.atlas-mda.org/repo/content/repositories/releases</url>
+	    </repository>
+        <snapshotRepository>
+          <id>atlas-snapshots</id>
+          <url>http://www.atlas-mda.org/repo/content/repositories/snapshots</url>
+          <uniqueVersion>false</uniqueVersion>
+        </snapshotRepository>
       </distributionManagement>
+
+	<scm>
+	    <connection>scm:svn:http://atlas-mda.googlecode.com/svn/engine/trunk</connection>
+	    <developerConnection>scm:svn:https://atlas-mda.googlecode.com/svn/engine/trunk</developerConnection>
+	    <url>http://atlas-mda.googlecode.com/svn/engine/trunk</url>
+	  </scm>
 
    <repositories>
 	<repository>
 	    <releases>
-		<enabled>false</enabled>
-		<updatePolicy>always</updatePolicy>
-		<checksumPolicy>warn</checksumPolicy>
+			<enabled>false</enabled>
+			<updatePolicy>always</updatePolicy>
+			<checksumPolicy>warn</checksumPolicy>
 	    </releases>
 	    <snapshots>
-		<enabled>true</enabled>
-		<updatePolicy>always</updatePolicy>
-		<checksumPolicy>fail</checksumPolicy>
+			<enabled>true</enabled>
+			<updatePolicy>always</updatePolicy>
+			<checksumPolicy>fail</checksumPolicy>
 	    </snapshots>
-	    <id>snapshots</id>
-	    <name>Atlas Snapshots</name>
-	    <url>http://www.atlas-mda.org/repo/content/repositories/snapshots</url>
-	</repository>
+		    <id>snapshots</id>
+		    <name>Atlas Snapshots</name>
+		    <url>http://www.atlas-mda.org/repo/content/repositories/snapshots</url>
+		</repository>
      </repositories> 
     
     <build>
