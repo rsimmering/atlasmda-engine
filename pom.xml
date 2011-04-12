@@ -7,7 +7,7 @@
     <groupId>org.atlas</groupId>
     <artifactId>atlas-engine</artifactId>
     <packaging>jar</packaging>
-    <version>2.3-SNAPSHOT</version>
+    <version>2.3</version>
 
     <distributionManagement>
         <repository>
@@ -22,9 +22,9 @@
     </distributionManagement>
 
     <scm>
-        <connection>scm:svn:http://atlas-mda.googlecode.com/svn/engine/trunk</connection>
-        <developerConnection>scm:svn:https://atlas-mda.googlecode.com/svn/engine/trunk</developerConnection>
-        <url>http://atlas-mda.googlecode.com/svn/engine/trunk</url>
+        <connection>scm:svn:http://atlas-mda.googlecode.com/svn/engine/releases/atlas-engine-2.3</connection>
+        <developerConnection>scm:svn:https://atlas-mda.googlecode.com/svn/engine/releases/atlas-engine-2.3</developerConnection>
+        <url>http://atlas-mda.googlecode.com/svn/engine/releases/atlas-engine-2.3</url>
     </scm>
 
     <repositories>
