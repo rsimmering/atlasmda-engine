@@ -1,33 +1,27 @@
 package org.atlas.model.metamodel;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class Boundary extends Type {
 
-    private List<Operation> operations;
+    private Map<String, Operation> operations = new HashMap<String, Operation>();
     private Map<String, Property> properties = new HashMap<String, Property>();
 
     public Boundary() {
     }
 
-    public List<Operation> getOperations() {
-        if (operations == null) {
-            operations = new ArrayList<Operation>();
-        }
-        return operations;
+    public Collection<Operation> getOperations() {
+        return operations.values();
     }
-
-    public void setOperations(List<Operation> operations) {
-        this.operations = operations;
-    }
-
 
     public void addOperation(Operation operation) {
-        getOperations().add(operation);
+        operations.put(operation.getName(), operation);
+    }
+
+    public Operation getOperation(String name) {
+        return operations.get(name);
     }
 
     public Collection<Property> getProperties() {

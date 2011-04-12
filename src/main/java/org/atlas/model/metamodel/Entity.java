@@ -11,7 +11,7 @@ public class Entity extends Type {
 
     private Entity generalization;
     private Map<String, Property> properties = new HashMap<String, Property>();
-    private List<Operation> operations;
+    private Map<String, Operation> operations = new HashMap<String, Operation>();
     private Map<Association.Multiplicity, List<Association>> associations;
     private Map<String, Association> associationsByName;
     private boolean hasMany = false;
@@ -29,19 +29,16 @@ public class Entity extends Type {
         return properties.get(name);
     }
 
-    public List<Operation> getOperations() {
-        if (operations == null) {
-            operations = new ArrayList<Operation>();
-        }
-        return operations;
-    }
-
-    public void setOperations(List<Operation> operations) {
-        this.operations = operations;
+    public Collection<Operation> getOperations() {
+        return operations.values();
     }
 
     public void addOperation(Operation operation) {
-        getOperations().add(operation);
+        operations.put(operation.getName(), operation);
+    }
+
+    public Operation getOperation(String name) {
+        return operations.get(name);
     }
 
     public Map<Association.Multiplicity, List<Association>> getAssociations() {

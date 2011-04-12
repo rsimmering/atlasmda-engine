@@ -1,26 +1,24 @@
 package org.atlas.model.metamodel;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
+
 
 
 public class Control extends Type {
 
-    private List<Operation> operations;
- 
-    public List<Operation> getOperations() {
-        if (operations == null) {
-            operations = new ArrayList<Operation>();
-        }
-        return operations;
-    }
+    private Map<String, Operation> operations = new HashMap<String, Operation>();
 
-    public void setOperations(List<Operation> operations) {
-        this.operations = operations;
+    public Collection<Operation> getOperations() {
+        return operations.values();
     }
-    
 
     public void addOperation(Operation operation) {
-        getOperations().add(operation);
+        operations.put(operation.getName(), operation);
+    }
+
+    public Operation getOperation(String name) {
+        return operations.get(name);
     }
 }

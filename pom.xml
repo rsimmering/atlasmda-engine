@@ -1,3 +1,4 @@
+
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
     <name>Atlas Model Transformation Engine</name>
@@ -8,17 +9,17 @@
     <packaging>jar</packaging>
     <version>2.3-SNAPSHOT</version>
 
-	<distributionManagement>
-		<repository>
-			<id>atlas-releases</id>
-			<url>http://maven.atlas-mda.org/nexus/content/repositories/atlas-releases</url>
-		</repository>
-		<snapshotRepository>
-			<id>atlas-snapshots</id>
-			<url>http://maven.atlas-mda.org/nexus/content/repositories/atlas-snapshots</url>
-			<uniqueVersion>false</uniqueVersion>
-		</snapshotRepository>
-	</distributionManagement>
+    <distributionManagement>
+        <repository>
+            <id>atlas-releases</id>
+            <url>http://maven.atlas-mda.org/nexus/content/repositories/atlas-releases</url>
+        </repository>
+        <snapshotRepository>
+            <id>atlas-snapshots</id>
+            <url>http://maven.atlas-mda.org/nexus/content/repositories/atlas-snapshots</url>
+            <uniqueVersion>false</uniqueVersion>
+        </snapshotRepository>
+    </distributionManagement>
 
     <scm>
         <connection>scm:svn:http://atlas-mda.googlecode.com/svn/engine/trunk</connection>
@@ -28,20 +29,20 @@
 
     <repositories>
         <repository>
-			<id>atlas-releases</id>
-			<name>Atlas Releases</name>
-			<url>http://maven.atlas-mda.org/nexus/content/repositories/atlas-releases</url>
-		</repository>
-		<repository>
-			<id>atlas-snapshots</id>
-			<name>Atlas Snapshots</name>
-			<url>http://maven.atlas-mda.org/nexus/content/repositories/atlas-snapshots</url>
-		</repository>
-		<repository>
-			<id>thirdparty</id>
-			<name>3rd Party</name>
-			<url>http://maven.atlas-mda.org/nexus/content/repositories/thirdparty</url>
-		</repository>
+            <id>atlas-releases</id>
+            <name>Atlas Releases</name>
+            <url>http://maven.atlas-mda.org/nexus/content/repositories/atlas-releases</url>
+        </repository>
+        <repository>
+            <id>atlas-snapshots</id>
+            <name>Atlas Snapshots</name>
+            <url>http://maven.atlas-mda.org/nexus/content/repositories/atlas-snapshots</url>
+        </repository>
+        <repository>
+            <id>thirdparty</id>
+            <name>3rd Party</name>
+            <url>http://maven.atlas-mda.org/nexus/content/repositories/thirdparty</url>
+        </repository>
     </repositories>
 
     <build>
