@@ -8,6 +8,7 @@ public class Target {
     private String name;
     private String stereotype;
     private Boolean collection;
+    private String condition;
     private String template;
     private String outputFile;
     private String outputPath;
@@ -33,16 +34,24 @@ public class Target {
         this.outputFile = outputFile;
     }
 
-    public boolean isOverwritable() {
-        return Boolean.valueOf(overwrite);
+    public String getCondition() {
+        return condition;
     }
 
+    public void setCondition(String condition) {
+        this.condition = condition;
+    }
+    
     public Boolean getOverwrite() {
         return overwrite;
     }
 
     public void setOverwrite(Boolean overwrite) {
         this.overwrite = overwrite;
+    }
+    
+    public boolean isOverwritable() {
+        return Boolean.valueOf(overwrite);
     }
 
     public String getTemplate() {

@@ -33,6 +33,7 @@ public class Context {
     private static final String OUTPUT_FILE = "outputFile";
     private static final String OUTPUT_PATH = "outputPath";
     private static final String OVERWRITE = "overwrite";
+    private static final String CONDITION_ATTR = "condition";
     private static final String COLLECTION = "collection";
     private static final String VARIABLE = "\\$\\{.*?\\}";
     private static final String SOURCE = ".source.";
@@ -42,9 +43,11 @@ public class Context {
     private static final String PRIMITIVES = "context/primitives";
     private static final String UTILITY = "context/utilities/utility";
     private static final String MODEL = "context/models/model";
+    private static final String CONDITION = "context/conditions/condition";
     private static final String TARGET = "context/targets/target";
     private static final String TARGET_PROPERTY = "context/targets/target/property";
 
+    private static final String ADD_CONDITION = "addCondition";
     private static final String SET_PROPERTY = "setProperty";
     private static final String SET_TEMPLATES = "setTemplates";
     private static final String SET_PRIMITIVES = "setPrimitives";
@@ -63,6 +66,7 @@ public class Context {
     private Map<String, String> properties;
     private Map<Stereotype, List<Target>> singleTargets = new HashMap<Stereotype, List<Target>>();
     private Map<Stereotype, List<Target>> collectionTargets = new HashMap<Stereotype, List<Target>>();
+    private Map<String, Condition> conditions = new HashMap<String, Condition>();
     private Set<String> outputPaths = new HashSet<String>();
 
     private static String ROOT_FOLDER = "";
@@ -109,8 +113,12 @@ public class Context {
             d.addSetProperties(UTILITY, new String[]{NAME, IMPL}, new String[]{NAME, IMPL});
             d.addSetNext(UTILITY, ADD_UTILITY_INPUT);
             
+            d.addCallMethod(CONDITION, ADD_CONDITION, 2);
+            d.addCallParam(CONDITION, 0, NAME);
+            d.addCallParam(CONDITION, 1);
+            
             d.addObjectCreate(TARGET, Target.class);
-            d.addSetProperties(TARGET, new String[]{NAME, STEREOTYPE, COLLECTION, TEMPLATE, OUTPUT_FILE, OUTPUT_PATH, OVERWRITE}, new String[]{NAME, STEREOTYPE, COLLECTION, TEMPLATE, OUTPUT_FILE, OUTPUT_PATH, OVERWRITE});
+            d.addSetProperties(TARGET, new String[]{NAME, STEREOTYPE, COLLECTION, CONDITION_ATTR, TEMPLATE, OUTPUT_FILE, OUTPUT_PATH, OVERWRITE}, new String[]{NAME, STEREOTYPE, COLLECTION, CONDITION_ATTR, TEMPLATE, OUTPUT_FILE, OUTPUT_PATH, OVERWRITE});
             d.addCallMethod(TARGET_PROPERTY, SET_PROPERTY, 2);
             d.addCallParam(TARGET_PROPERTY, 0, NAME);
             d.addCallParam(TARGET_PROPERTY, 1, VALUE);
@@ -222,6 +230,27 @@ public class Context {
 
     public static List<UtilityInput> getUtilityInputs() throws TransformException {
         return instance().utilityInputs;
+    }
+    
+    public void addCondition(String name, String expression) {
+        //modelInputs.add(model);
+    	System.out.println(name + " " + expression);
+    	Condition condition = new Condition();
+    	condition.setName(name);
+    	condition.setExpression(expression);
+    	getConditions().put(name, condition);
+    }
+    
+    public Map<String, Condition> getConditions() {
+        if (conditions == null) {
+        	conditions = new HashMap<String, Condition>();
+        }
+
+        return conditions;
+    }
+
+    public static Condition getCondition(String name) throws TransformException {
+        return instance().getConditions().get(name);
     }
 
     public void addModelInput(ModelInput model) {

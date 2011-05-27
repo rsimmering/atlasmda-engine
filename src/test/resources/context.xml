@@ -11,7 +11,12 @@
     <templates dir="${test.resource.root}/templates"/>
     <utilities>
         <utility name="util" impl="org.atlas.engine.utility.NamingUtility"/>
+		<utility name="stringutil" impl="org.atlas.utils.AtlasStringUtils"/>
     </utilities>
+	<conditions>
+		<condition name="notTransient"><![CDATA[!${eval.boolTag(type, 'transient')}]]></condition>
+		<condition name="isPersisted"><![CDATA[!${eval.boolTag(type, 'transient')} && !${eval.boolTag(type, 'composite')}]]></condition>
+	</conditions>
     <targets>
         <target name="entity"
                 stereotype="entity"

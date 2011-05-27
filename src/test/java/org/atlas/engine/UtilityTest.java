@@ -26,7 +26,7 @@ public class UtilityTest {
         System.out.println("getUtility");
         try{
             List<UtilityInput> utilities = Context.getUtilityInputs();
-            assertEquals(utilities.size(), 1);
+            assertEquals(utilities.size(), 2);
             UtilityInput utility = utilities.get(0);
             assertEquals("org.atlas.engine.utility.NamingUtility", utility.getImpl());
             assertEquals("util", utility.getName());

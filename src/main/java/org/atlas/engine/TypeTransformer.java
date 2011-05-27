@@ -4,9 +4,12 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import org.apache.commons.lang.StringUtils;
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.exception.MethodInvocationException;
@@ -28,6 +31,17 @@ public class TypeTransformer {
     }
 
     public static File transform(Target target, Type type) throws TransformException {
+    	String conditional = target.getCondition();
+    	if(!StringUtils.isBlank(conditional)){
+    		Condition c = Context.getCondition(conditional);
+    		if(c == null){
+    			throw new TransformException("Condition [" + conditional + "] does not exist!");
+    		}
+    		if(!ExpressionEvaluator.evaluateExpression(c.getExpression(), type)){
+        		return null;
+    		}
+    	}
+    	
         File outputFile = null;
         FileWriter fw = null;
         Template template = null;
@@ -68,6 +82,24 @@ public class TypeTransformer {
     }
 
     public static File transformCollection(Target target, Collection<Type> types) throws TransformException {
+    	String condition = target.getCondition();
+    	if(!StringUtils.isBlank(condition)){
+    		Condition c = Context.getCondition(condition);
+    		if(c == null){
+    			throw new TransformException("Condition [" + condition + "] does not exist!");
+    		}
+    		
+    		Collection<Type> result = new HashSet<Type>();
+    		for(Type type : types){
+    			if(ExpressionEvaluator.evaluateExpression(c.getExpression(), type)){
+    				result.add(type);
+    			}
+    		}
+    		types = result;
+    	}
+    	if(types.size() == 0)
+    		return null;
+    	
         File outputFile = null;
         FileWriter fw = null;
         Template template = null;

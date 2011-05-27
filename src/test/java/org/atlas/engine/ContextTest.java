@@ -98,6 +98,6 @@ public class ContextTest {
         assertEquals("entity.vm", t.getTemplate());
         assertEquals("${name}.xml", t.getOutputFile());
         assertEquals("org.atlas.test.entity", t.getProperty("namespace"));
-        assertTrue(t.getOverwrite());
+        assertTrue(Boolean.valueOf(t.getOverwrite()));
     }
 }
